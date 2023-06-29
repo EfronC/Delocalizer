@@ -1,3 +1,7 @@
 /Finished
 /Files
 /Extracted
+/__pycache__
+*.mkv
+*.ass
+*.json

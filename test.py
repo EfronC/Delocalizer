@@ -7,6 +7,8 @@ import glob
 import pysubs2
 import argparse
 
+from delocalizer import Delocalizer
+
 LANGUAGES = ["eng", "spa"]
 WORDS = {}
 ERRORS = []
@@ -306,24 +308,12 @@ def demux(language):
 
 
 def main():
-	language = "eng"
 	args = parser.parse_args()
-	print(args)
-	print(args.jfile)
-	if args.jfile:
-		load_json(args.jfile)
-		print(WORDS)
-	else:
-		print("Working without JSON file.")
-	if args.language:
-		if args.language in LANGUAGES:
-			print("Language:", args.language)
-			language = args.language
-	demux(language)
-	if len(ERRORS) > 0:
-		print("There were errors:")
-		for i in ERRORS:
-			print("-", i)
+
+	delocalizer = Delocalizer()
+	s = delocalizer.prepare_data(args)
+	if s:
+		delocalizer.delocalize()
 
 def test():
 	testsubs("One.Piece.E796-E798.720p.ass")

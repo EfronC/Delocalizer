@@ -1,4 +1,6 @@
-#Imports
+import subprocess
+import sys
+import json
 
 
 class Merger:
@@ -8,23 +10,13 @@ class Merger:
     def __init__(self):
         self.status = 0
         self.finished = "./Finished"
+        self.streams = None
 
     def get_streams(self, fname):
         try:
             info = json.loads(subprocess.check_output(["ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams", fname]))
+            self.streams = info
             return info
-        except Exception as e:
-            print(e)
-            return False
-
-    def shift_subs(fname, delta):
-        try:
-            subs1 = pysubs2.load(fname, encoding="utf-8")
-            subs1.shift(s=delta)
-            msub = "m_" + fname
-            subs1.save(msub)
-
-            return msub
         except Exception as e:
             print(e)
             return False
@@ -43,10 +35,8 @@ class Merger:
 
     def demux(self, name, index, output):
         try:
-            # filename = os.path.splitext(name)[0]
-            # subtitle = filename+".ass"
-
             args = ["ffmpeg", "-loglevel", "quiet", "-i", name, "-map", "0:{}".format(index), "-c", "copy", output]
+            print(args)
             rc = subprocess.Popen(args, shell=False)
             rc.communicate()
 
@@ -54,3 +44,39 @@ class Merger:
         except Exception as e:
             print(e)
             return False
+
+    def get_language_index(self, language):
+        try:
+            if self.streams:
+                index = -1
+                f_sub = -1
+                for i in self.streams["streams"]:
+                    if i["codec_type"] == "subtitle":
+                        if f_sub == -1:
+                            f_sub = i["index"]
+                        if "language" in i["tags"].keys():
+                            if i["tags"]["language"] == language:
+                                print(i["tags"]["language"], "|", i["index"])
+                                index = i["index"]
+                                return index
+                if f_sub > -1:
+                    return f_sub
+                else:
+                    return -1
+            else:
+                print("Streams not setted")
+                return -1
+        except Exception as e:
+            print(e)
+            return -1
+
+    def get_number_subs(self):
+        try:
+            subs = 0
+            for i in self.streams["streams"]:
+                if i["codec_type"] == "subtitle":
+                    subs += 1
+            return subs
+        except Exception as e:
+            print(e)
+            return 0

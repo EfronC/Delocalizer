@@ -51,16 +51,39 @@ string modifySubs(const string& subfile, const std::string& replacementFile) {
 
         std::map<std::string, std::string> WORDS = loadReplacementWords(replacementFile);
 
+        // std::ofstream outputFile(nfilename);
+        // if (!outputFile) {
+        //     throw std::runtime_error("Failed to open output file");
+        // }
+
+        // // Modify the subtitle lines
+        // //Json::Value jsonData;
+        // for (int i = 0; i < track->n_events; i++) {
+        //     ASS_Event* event = track->events + i;
+        //     string modifiedText = event->Text;
+        //     for (const auto& word : WORDS) {
+        //         modifiedText = regex_replace(modifiedText, regex(word.first, regex_constants::icase), word.second);
+        //         //strcpy(event->Text, modifiedText.c_str()); // Convert string to char*
+
+        //         //jsonData[to_string(i + 1)] = modifiedText;
+        //     }
+
+        //     outputFile << i+1 << ";" << modifiedText << std::endl;
+        // }
+
+        // // Close the output file
+        // outputFile.close();
+
         // Modify the subtitle lines
         Json::Value jsonData;
         for (int i = 0; i < track->n_events; i++) {
             ASS_Event* event = track->events + i;
+            string modifiedText = event->Text;
             for (const auto& word : WORDS) {
-                string modifiedText = regex_replace(event->Text, regex(word.first, regex_constants::icase), word.second);
-                strcpy(event->Text, modifiedText.c_str()); // Convert string to char*
-
-                jsonData[to_string(i + 1)] = modifiedText;
+                modifiedText = regex_replace(modifiedText, regex(word.first, regex_constants::icase), word.second);
+                //strcpy(event->Text, modifiedText.c_str()); // Convert string to char*
             }
+            jsonData[to_string(i + 1)] = modifiedText;
         }
 
         // Save the modified subtitle to a JSON file
