@@ -117,7 +117,7 @@ class Delocalizer:
 
                 if index > -1:
                     print("Subtitles found at", index)
-                    self.subfile = self.merger.demux(self.file, index, "test.ass")
+                    self.subfile = self.merger.demux(self.file, index, "subfile.ass")
                     if self.subfile:
                         print("Delocalizing...")
                         word_json = self.replace_words(self.subfile)

@@ -7,26 +7,26 @@
 #include <json/json.h> // Include the jsoncpp header file
 using namespace std;
 
-std::map<std::string, std::string> loadReplacementWords(const std::string& filename) {
-    std::map<std::string, std::string> words;
+map<string, string> loadReplacementWords(const string& filename) {
+    map<string, string> words;
 
-    std::ifstream inputFile(filename);
+    ifstream inputFile(filename);
     if (!inputFile) {
-        throw std::runtime_error("Failed to open replacement words file");
+        throw runtime_error("Failed to open replacement words file");
     }
 
     Json::Value root;
     inputFile >> root;
 
     for (const auto& key : root.getMemberNames()) {
-        std::string value = root[key].asString();
+        string value = root[key].asString();
         words[key] = value;
     }
 
     return words;
 }
 
-string modifySubs(const string& subfile, const std::string& replacementFile) {
+string modifySubs(const string& subfile, const string& replacementFile) {
     try {
         // Initialize libass
         ASS_Library* assLibrary = ass_library_init();
@@ -43,36 +43,14 @@ string modifySubs(const string& subfile, const std::string& replacementFile) {
             throw runtime_error("Failed to load SSA file");
         }
 
+        // Define outfile name
         string nfilename = "[Delocalized] " + subfile;
         size_t lastDotIndex = nfilename.find_last_of('.');
         if (lastDotIndex != string::npos) {
             nfilename = nfilename.substr(0, lastDotIndex) + ".json";
         }
 
-        std::map<std::string, std::string> WORDS = loadReplacementWords(replacementFile);
-
-        // std::ofstream outputFile(nfilename);
-        // if (!outputFile) {
-        //     throw std::runtime_error("Failed to open output file");
-        // }
-
-        // // Modify the subtitle lines
-        // //Json::Value jsonData;
-        // for (int i = 0; i < track->n_events; i++) {
-        //     ASS_Event* event = track->events + i;
-        //     string modifiedText = event->Text;
-        //     for (const auto& word : WORDS) {
-        //         modifiedText = regex_replace(modifiedText, regex(word.first, regex_constants::icase), word.second);
-        //         //strcpy(event->Text, modifiedText.c_str()); // Convert string to char*
-
-        //         //jsonData[to_string(i + 1)] = modifiedText;
-        //     }
-
-        //     outputFile << i+1 << ";" << modifiedText << std::endl;
-        // }
-
-        // // Close the output file
-        // outputFile.close();
+        map<string, string> WORDS = loadReplacementWords(replacementFile);
 
         // Modify the subtitle lines
         Json::Value jsonData;
@@ -81,7 +59,6 @@ string modifySubs(const string& subfile, const std::string& replacementFile) {
             string modifiedText = event->Text;
             for (const auto& word : WORDS) {
                 modifiedText = regex_replace(modifiedText, regex(word.first, regex_constants::icase), word.second);
-                //strcpy(event->Text, modifiedText.c_str()); // Convert string to char*
             }
             jsonData[to_string(i + 1)] = modifiedText;
         }
