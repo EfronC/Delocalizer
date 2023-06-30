@@ -1,53 +1,61 @@
 import subprocess
 import sys
 import json
+import os
 
 
 class Merger:
 
     TASKS = {"demux":1, "mux":2}
+    STATUSES = {"NOFILE":0, "INITIALIZED":1, "MUXXING": 2, "DEMUXXING":3}
 
     def __init__(self):
         self.status = 0
         self.finished = "./Finished"
         self.streams = None
+        self.file = None
 
     def get_streams(self, fname):
         try:
-            info = json.loads(subprocess.check_output(["ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams", fname]))
-            self.streams = info
-            return info
+            if self.status == self.STATUSES["INITIALIZED"]:
+                return self.streams
+            else:
+                return False
         except Exception as e:
             print(e)
             return False
 
     def mux(self, f, subtitle, params):
         try:
-            #ads = ["-metadata:s:s:{}".format(sfiles), "language=eng", "-metadata:s:s:{}".format(sfiles), "handler_name=English", "-metadata:s:s:{}".format(sfiles), "title=Unlocalized", "-max_interleave_delta", "0", "-disposition:s:0", "0", "-disposition:s:{}".format(sfiles), "default", newfilename]
-            args = ["ffmpeg", "-loglevel", "quiet", "-y", "-i", f, "-i", subtitle, "-c", "copy", "-map", "0", "-map", "1"] + params
-            rc = subprocess.Popen(args, shell=False)
-            rc.communicate()
-
-            return True
+            if self.status == self.STATUSES["INITIALIZED"] and os.path.isfile(subtitle):
+                args = ["ffmpeg", "-loglevel", "quiet", "-y", "-i", f, "-i", subtitle, "-c", "copy", "-map", "0", "-map", "1"] + params
+                rc = subprocess.Popen(args, shell=False)
+                rc.communicate()
+                return True
+            else:
+                return False
         except Exception as e:
             print(e)
             return False
 
     def demux(self, name, index, output):
         try:
-            args = ["ffmpeg", "-loglevel", "quiet", "-i", name, "-map", "0:{}".format(index), "-c", "copy", output]
-            print(args)
-            rc = subprocess.Popen(args, shell=False)
-            rc.communicate()
+            if self.status == self.STATUSES["INITIALIZED"]:
+                args = ["ffmpeg", "-loglevel", "quiet", "-i", name, "-map", "0:{}".format(index), "-c", "copy", output]
+                print(args)
+                rc = subprocess.Popen(args, shell=False)
+                rc.communicate()
 
-            return output
+                return output
+            else:
+                return False
         except Exception as e:
             print(e)
             return False
 
     def get_language_index(self, language):
         try:
-            if self.streams:
+            if self.status == self.STATUSES["INITIALIZED"] and self.streams:
                 index = -1
                 f_sub = -1
                 for i in self.streams["streams"]:
@@ -64,7 +72,6 @@ class Merger:
                 else:
                     return -1
             else:
-                print("Streams not setted")
                 return -1
         except Exception as e:
             print(e)
@@ -72,11 +79,34 @@ class Merger:
 
     def get_number_subs(self):
         try:
-            subs = 0
-            for i in self.streams["streams"]:
-                if i["codec_type"] == "subtitle":
-                    subs += 1
-            return subs
+            if self.status == self.STATUSES["INITIALIZED"]:
+                subs = 0
+                for i in self.streams["streams"]:
+                    if i["codec_type"] == "subtitle":
+                        subs += 1
+                return subs
+            else:
+                return 0
         except Exception as e:
             print(e)
             return 0
+
+    def set_file(self, f):
+        try:
+            info = json.loads(subprocess.check_output(["ffprobe", "-v", "quiet", "-print_format", "json", "-show_streams", f]))
+            self.streams = info
+            self.status = self.STATUSES["INITIALIZED"]
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def remove_file(self):
+        try:
+            self.streams = None
+            self.file = None
+            self.status = self.STATUSES["NOFILE"]
+            return True
+        except Exception as e:
+            print(e)
+            return False

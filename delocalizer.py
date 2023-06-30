@@ -2,6 +2,7 @@ import pysubs2
 import argparse
 import json
 import glob
+import os
 
 from cyfiles.modify_subs import modify_subs_py
 from merger import Merger
@@ -92,6 +93,18 @@ class Delocalizer:
             print(e)
             return -1
 
+    def generate_params(self):
+        try:
+            sfiles = self.merger.get_number_subs()
+            filename = os.path.splitext(self.file)[0]
+            newfilename = "."+os.sep+"Finished"+os.sep+filename + '.mkv'
+
+            ads = ["-metadata:s:s:{}".format(sfiles), "language=eng", "-metadata:s:s:{}".format(sfiles), "handler_name=English", "-metadata:s:s:{}".format(sfiles), "title=Unlocalized", "-max_interleave_delta", "0", "-disposition:s:0", "0", "-disposition:s:{}".format(sfiles), "default", newfilename]
+            return ads
+        except Exception as e:
+            print(e)
+            return []
+
     def delocalize(self):
         try:
             files = glob.glob('*.mkv')
@@ -99,6 +112,7 @@ class Delocalizer:
             for f in files:
                 print("Extracting: ", f)
                 self.file = f
+                self.merger.set_file(f)
                 index = self.get_index()
 
                 if index > -1:
@@ -106,29 +120,28 @@ class Delocalizer:
                     self.subfile = self.merger.demux(self.file, index, "test.ass")
                     if self.subfile:
                         print("Delocalizing...")
-                        print(self.subfile, " | ", self.wordsfile)
                         word_json = self.replace_words(self.subfile)
-                        print("Replaced")
                         unloc_sub = self.modify_subs(word_json)
-                        print(unloc_sub)
-                        # if unloc_sub:
-                        #     os.remove(subfile)
-                        #     print("Muxxing with file:", unloc_sub)
-                        #     r = mux(streams, f, unloc_sub)
-                        #     if r:
-                        #         os.remove(unloc_sub)
-                        #     else:
-                        #         print("Failed to mux sub!")
-                        #         self.ERRORS.append(str(f))
-                        # else:
-                        #     print("Failed to modify subs!")
-                        #     self.ERRORS.append(str(f))
+                        if unloc_sub:
+                            os.remove(self.subfile)
+                            os.remove(word_json)
+                            print("Muxxing with file:", unloc_sub)
+                            params = self.generate_params()
+                            r = self.merger.mux(f, unloc_sub, params)
+                            if r:
+                                os.remove(unloc_sub)
+                            else:
+                                print("Failed to mux sub!")
+                                self.ERRORS.append(str(self.file))
+                        else:
+                            print("Failed to modify subs!")
+                            self.ERRORS.append(str(self.file))
                     else:
                         print("Failed to extract Subtitle!")
-                        self.ERRORS.append(str(f))
+                        self.ERRORS.append(str(self.file))
                 else:
                     print("Subtitles not found!")
-                    self.ERRORS.append(str(f))
+                    self.ERRORS.append(str(self.file))
         except Exception as e:
             print(e)
             return False
