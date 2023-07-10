@@ -25,5 +25,5 @@ For C modules(Optional):
 }
 ```
 
-Recommendation, if a word is contained in another("Hello" and "Hello World"), set the lenghtier first.
+Recommendation, if a word is contained in another("Hello" and "Hello World"), set the lengthier first.
 - Once you have created those files, just execute the program with `python main.py --j <name json file>.json`
