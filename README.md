@@ -1,23 +1,29 @@
-Make sure to replace "your_libass_library", "/path/to/your/libass/library", and "/path/to/your/libass/headers" with the appropriate values specific to your libass installation.
+Delocalizer
+===========
 
-Open a terminal or command prompt and navigate to the directory containing the setup.py file.
+Delocalizer script to replace a set of words in a subtitle track on an MKV file for one specified on a JSON file.
 
-Run the following command to build the Cython extension module:
+## Installation
+For Python:
 
+- Just create a Virtual Environment and run `pip install -r requirements`
+
+For C modules(Optional):
+
+- In progress...
+
+## Instructions
+
+- Make sure to create a .env file with the variable CYENV, which will tell the program if to use pure Python or Cython(If configured).
+- Set the files you want to delocalize in the root folder.
+- Create the JSON file, with this format
 ```
-python setup.py build_ext --inplace
+{
+    "<word to search>":"new word",
+    "<word to search>":"new word",
+    ...
+}
 ```
 
-After the build completes, you should have a modify_subs.so file (on Linux/Mac) or modify_subs.pyd file (on Windows) generated in the same directory.
-Now, you can import and use the modify_subs_py function in your Python code as follows:
-
-```
-import modify_subs
-
-subfile = "your_subtitles.ass"
-modify_subs.modify_subs_py(subfile)
-```
-
-Ensure that the modify_subs.so (or modify_subs.pyd) file and the libass library files are in the same directory as your Python script or accessible via the system's library paths.
-
-Note that you need to replace "your_subtitles.ass" with the actual path to your SSA file. Additionally, make sure to replace "your_libass_library", "/path/to/your/libass/library", and "/path/to/your/libass/headers" with the correct values according to your libass installation.
+Recommendation, if a word is contained in another("Hello" and "Hello World"), set the lenghtier first.
+- Once you have created those files, just execute the program with `python main.py --j <name json file>.json`
