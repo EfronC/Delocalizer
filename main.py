@@ -1,64 +1,32 @@
-import subprocess
-import sys
-import json
 import os
-import glob
-import pysubs2
+import argparse
+from dotenv import load_dotenv
 
-mkvmerge = "C:\\Users\\DrkEfron\\Documents\\Extract\\mkvtoolnix\\mkvmerge.exe"
-mkvextract = "C:\\Users\\DrkEfron\\Documents\\Extract\\mkvtoolnix\\mkvextract.exe"
+load_dotenv()
 
-BLEACH_WORDS = [
-	["Soul Reaper", "Shinigami"],
-	["Spiritual Pressure", "Reiatsu"]
-]
+from delocalizer import Delocalizer
 
-def subExtract():
-	files = glob.glob(".\\Files\\*.mkv")
-	output = []
-	#subsfn = []
-	for f in files:
-		print("File: ", f)
-		info = json.loads(subprocess.check_output([mkvmerge, '-J', f]))
-		filename = os.path.splitext(f)[0]
-		for i in info['tracks']:
-			print(i['type'])
-			#print(i['track_name'])
-			if i['type'] == 'subtitles':
-				if i['properties']["track_name"] == 'English' or i['properties']["language"] == 'eng':
-					sfn = filename+".ass"
-					args = [mkvextract, 'tracks', f, str(i['properties']["number"]-1)+":"+filename+".ass"]
-					rc = subprocess.Popen(args, shell=False)
-					rc.communicate()
-					return sfn
+parser = argparse.ArgumentParser(description='Modify a subtitle track to make a delocalized version from a JSON file.')
+parser.add_argument('--shift', dest='shift', type=float, action="store", default=0.0,
+                   help='Shift time')
+parser.add_argument('--j', dest='jfile', type=str, action="store", default=False,
+                   help='JSON file')
+parser.add_argument('--l', dest='language', type=str, action="store", default=False,
+                   help='Language to search')
+parser.add_argument('--f', dest='folder', type=str, action="store", default=False,
+                   help='Folder to save')
 
-def modifySubs():
-	files = glob.glob(".\\Files\\*.ass")
-	for f in files:
-		subs = pysubs2.load(f,encoding='utf-8')
-		filename = os.path.splitext(f)[0].split("\\")[-1]
-		for line in subs:
-			line.text = line.text.replace("Soul Reaper", "Shinigami")
-			line.text = line.text.replace("Spiritual Pressure", "Reiatsu")
-		subs.save("./Extracted/[Unlocalized] "+filename+".ass")
-
-# def mux():
-# 	files = glob.glob('*.mkv')
-# 	for f in files:
-# 		filename = os.path.splitext(f)[0]
-# 		newfilename = filename + '_Delocalized.mkv'
-		#args = [mkvmerge, '--ui-language', 'en', '--output', newfilename, '--no-global-tags', ]
-
+path = './Finished'
 
 def main():
-	sfn = subExtract()
-	modifySubs()
-	#clean()
+	if not os.path.exists(path):
+		os.mkdir(path)
+	args = parser.parse_args()
+
+	delocalizer = Delocalizer()
+	s = delocalizer.prepare_data(args)
+	if s:
+		delocalizer.delocalize()
 
 if __name__ == '__main__':
 	main()
-
-#print(mkvmerge)
-#f = '.\\Files\\Getsuyoubi no Tawawa 2 - 02.mkv'
-
-#print(info['tracks'])

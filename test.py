@@ -6,6 +6,9 @@ import re
 import glob
 import pysubs2
 import argparse
+from dotenv import load_dotenv
+
+load_dotenv()
 
 from delocalizer import Delocalizer
 
@@ -15,13 +18,15 @@ ERRORS = []
 
 parser = argparse.ArgumentParser(description='Convert vobsub subtitles into srt format.')
 parser.add_argument('--shift', dest='shift', type=float, action="store", default=0.0,
-                   help='The tesseract language to use')
+                   help='Shift time')
 parser.add_argument('--j', dest='jfile', type=str, action="store", default=False,
                    help='JSON file')
 parser.add_argument('--l', dest='language', type=str, action="store", default=False,
                    help='Language')
 parser.add_argument('--f', dest='folder', type=str, action="store", default=False,
                    help='Folder')
+parser.add_argument('--y', dest='yes', type=int, action="store", default=False,
+                   help='Edit the first subtitle track')
 
 def load_json(jname):
 	try:

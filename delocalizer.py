@@ -4,7 +4,12 @@ import json
 import glob
 import os
 
-from cyfiles.modify_subs import modify_subs_py
+cyenv = os.getenv("CYENV", 'False').lower() in ('true', '1') #os.getenv('CYENV')
+
+if cyenv:
+    from cyfiles.modify_subs import modify_subs_py
+else:
+    from md_subs import modify_subs_py
 from merger import Merger
 
 class Delocalizer:
@@ -17,6 +22,17 @@ class Delocalizer:
         self.file = None
         self.subfile = None
         self.merger = Merger()
+
+    def modify_subs_alter(self, f):
+        try:
+            name = modify_subs_py(f, self.wordsfile)
+            if name:
+                return name
+            else:
+                return False
+        except Exception as e:
+            print(e)
+            return False
 
     def modify_subs(self, jname):
         try:
@@ -111,24 +127,44 @@ class Delocalizer:
             index = -1
             for f in files:
                 print("Extracting: ", f)
+                # Initial tasks
                 self.file = f
                 self.merger.set_file(f)
                 index = self.get_index()
 
                 if index > -1:
+                    "Demux sub file"
                     print("Subtitles found at", index)
-                    self.subfile = self.merger.demux(self.file, index, "subfile.ass")
+                    if self.merger.codec_name == "ass":
+                        outputf = "subfile.ass"
+                    elif self.merger.codec_name == "subrip":
+                        outputf = "subfile.srt"
+                    else:
+                        raise Exception("Subtitle codec not recognized")
+                        
+                    self.subfile = self.merger.demux(self.file, index, outputf)
                     if self.subfile:
                         print("Delocalizing...")
-                        word_json = self.replace_words(self.subfile)
-                        unloc_sub = self.modify_subs(word_json)
+                        # Delocalize file - Check if using Python or C
+                        if cyenv:
+                            print("Using C")
+                            word_json = self.replace_words(self.subfile)
+                            unloc_sub = self.modify_subs(word_json)
+                        else:
+                            print("Using Python")
+                            unloc_sub = self.modify_subs_alter(self.subfile)
+
                         if unloc_sub:
+                            # Remove sub file and Mux unlocalized
                             os.remove(self.subfile)
-                            os.remove(word_json)
+                            if cyenv:
+                                os.remove(word_json)
+                                
                             print("Muxxing with file:", unloc_sub)
                             params = self.generate_params()
                             r = self.merger.mux(f, unloc_sub, params)
                             if r:
+                                #Clean
                                 os.remove(unloc_sub)
                             else:
                                 print("Failed to mux sub!")
@@ -142,6 +178,7 @@ class Delocalizer:
                 else:
                     print("Subtitles not found!")
                     self.ERRORS.append(str(self.file))
+            return True
         except Exception as e:
             print(e)
             return False

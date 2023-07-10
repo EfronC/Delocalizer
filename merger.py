@@ -14,6 +14,7 @@ class Merger:
         self.finished = "./Finished"
         self.streams = None
         self.file = None
+        self.codec_name = None
 
     def get_streams(self, fname):
         try:
@@ -28,46 +29,56 @@ class Merger:
     def mux(self, f, subtitle, params):
         try:
             if self.status == self.STATUSES["INITIALIZED"] and os.path.isfile(subtitle):
+                self.status = self.STATUSES["MUXXING"]
                 args = ["ffmpeg", "-loglevel", "quiet", "-y", "-i", f, "-i", subtitle, "-c", "copy", "-map", "0", "-map", "1"] + params
                 rc = subprocess.Popen(args, shell=False)
                 rc.communicate()
+                self.status = self.STATUSES["INITIALIZED"]
                 return True
             else:
                 return False
         except Exception as e:
+            self.status = self.STATUSES["INITIALIZED"]
             print(e)
             return False
 
     def demux(self, name, index, output):
         try:
             if self.status == self.STATUSES["INITIALIZED"]:
+                self.status = self.STATUSES["DEMUXXING"]
                 args = ["ffmpeg", "-loglevel", "quiet", "-i", name, "-map", "0:{}".format(index), "-c", "copy", output]
                 print(args)
                 rc = subprocess.Popen(args, shell=False)
                 rc.communicate()
+                self.status = self.STATUSES["INITIALIZED"]
 
                 return output
             else:
                 return False
         except Exception as e:
             print(e)
+            self.status = self.STATUSES["INITIALIZED"]
             return False
 
-    def get_language_index(self, language):
+    def get_language_index(self, language: str) -> int:
         try:
             if self.status == self.STATUSES["INITIALIZED"] and self.streams:
                 index = -1
                 f_sub = -1
+                cn = None
                 for i in self.streams["streams"]:
                     if i["codec_type"] == "subtitle":
                         if f_sub == -1:
+                            cn = i["codec_name"]
                             f_sub = i["index"]
                         if "language" in i["tags"].keys():
                             if i["tags"]["language"] == language:
                                 print(i["tags"]["language"], "|", i["index"])
                                 index = i["index"]
+                                self.codec_name = i["codec_name"]
                                 return index
                 if f_sub > -1:
+                    self.codec_name = cn
                     return f_sub
                 else:
                     return -1
