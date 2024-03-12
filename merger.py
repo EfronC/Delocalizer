@@ -30,7 +30,7 @@ class Merger:
         try:
             if self.status == self.STATUSES["INITIALIZED"] and os.path.isfile(subtitle):
                 self.status = self.STATUSES["MUXXING"]
-                args = ["ffmpeg", "-loglevel", "quiet", "-y", "-i", f, "-i", subtitle, "-c", "copy", "-map", "0", "-map", "1"] + params
+                args = ["ffmpeg", "-loglevel", "quiet", "-y", "-i", f, "-i", subtitle, "-c", "copy", "-map", "0:v", "-map", "0:a"] + params[0] + ["-map", "1"] + params[1]
                 rc = subprocess.Popen(args, shell=False)
                 rc.communicate()
                 self.status = self.STATUSES["INITIALIZED"]
@@ -96,6 +96,23 @@ class Merger:
                     if i["codec_type"] == "subtitle":
                         subs += 1
                 return subs
+            else:
+                return 0
+        except Exception as e:
+            print(e)
+            return 0
+
+    def get_kept_subs(self):
+        try:
+            if self.status == self.STATUSES["INITIALIZED"]:
+                subs = 0
+                kept = list()
+                for i in self.streams["streams"]:
+                    if i["codec_type"] == "subtitle":
+                        if not "Unlocalized" in i["tags"].get("title", ''):
+                            kept.append(subs)
+                        subs += 1
+                return kept
             else:
                 return 0
         except Exception as e:

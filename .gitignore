@@ -2,6 +2,8 @@
 /Files
 /Extracted
 /__pycache__
+/dist
+MANIFEST
 *.mkv
 *.ass
 *.json
