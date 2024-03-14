@@ -1,5 +1,9 @@
 import requests 
 import json 
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def httpRequest(type: str, url: str, body:dict={}, headers:dict={}) -> dict:
 	if type == "GET":
@@ -17,12 +21,12 @@ def httpRequest(type: str, url: str, body:dict={}, headers:dict={}) -> dict:
 		print(r.content)
 		raise Exception("Request Failed")
 
-def get_data():
+def get_data(name):
     try:
         headers = {
         'Content-Type': 'application/json'
         }
-        r = httpRequest("POST", os.getenv("JSONLAMBDA"), {"name": "one piece"}, headers)
+        r = httpRequest("POST", os.getenv("JSONLAMBDA"), {"name": name}, headers)
 
         return r
     except Exception as e:

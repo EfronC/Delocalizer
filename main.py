@@ -13,8 +13,14 @@ parser.add_argument('--j', dest='jfile', type=str, action="store", default=False
                    help='JSON file')
 parser.add_argument('--l', dest='language', type=str, action="store", default=False,
                    help='Language to search')
+parser.add_argument('--w', dest='words', type=str, action="store", default=False,
+                   help='Use an external lambda to get the keywords JSON')
 parser.add_argument('--f', dest='folder', type=str, action="store", default=False,
                    help='Folder to save')
+parser.add_argument('--k', dest='keep_subs', action=argparse.BooleanOptionalAction,
+                   help='Keep unlocalized sub file')
+parser.add_argument('--no-mux', dest='nomux', action=argparse.BooleanOptionalAction,
+                   help='Not to make the last step')
 
 path = './Finished'
 

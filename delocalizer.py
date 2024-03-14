@@ -3,6 +3,7 @@ import argparse
 import json
 import glob
 import os
+from utils import get_data
 
 cyenv = os.getenv("CYENV", 'False').lower() in ('true', '1') #os.getenv('CYENV')
 
@@ -18,6 +19,8 @@ class Delocalizer:
         self.LANGUAGES = ["eng", "spa"]
         self.ERRORS = []
         self.language = "eng"
+        self.keep_subs = False
+        self.nomux = False
         self.wordsfile = None
         self.file = None
         self.subfile = None
@@ -75,13 +78,21 @@ class Delocalizer:
 
     def prepare_data(self, args):
         try:
-            if args.jfile:
-                self.wordsfile = args.jfile
+            if args.words:
+                words = get_data(args.words)
+                self.wordsfile = words
             else:
-                raise Exception("No JSON file indicated")
+                if args.jfile:
+                    self.wordsfile = args.jfile
+                else:
+                    raise Exception("No JSON file indicated")
             if args.language:
                 if args.language in LANGUAGES:
                     self.language = args.language
+            if args.keep_subs:
+                self.keep_subs = True
+            if args.nomux:
+                self.nomux = True
 
             return True
         except Exception as e:
@@ -133,6 +144,19 @@ class Delocalizer:
             print(e)
             return []
 
+    def clean_files(self, file, f):
+        try:
+            if not self.keep_subs:
+                os.remove(file)
+            else:
+                newfilename = "."+os.sep+"Subs"+os.sep+f.split(".")[0] + '.' + file.split(".")[1]
+                os.rename(file, newfilename)
+
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
     def delocalize(self):
         try:
             files = glob.glob('*.mkv')
@@ -169,18 +193,21 @@ class Delocalizer:
                         if unloc_sub:
                             # Remove sub file and Mux unlocalized
                             os.remove(self.subfile)
-                            if cyenv:
-                                os.remove(word_json)
-                                
-                            print("Muxxing with file:", unloc_sub)
-                            params = self.generate_params()
-                            r = self.merger.mux(f, unloc_sub, params)
-                            if r:
-                                #Clean
-                                os.remove(unloc_sub)
+                            if self.nomux:
+                                self.clean_files(unloc_sub, f)
                             else:
-                                print("Failed to mux sub!")
-                                self.ERRORS.append(str(self.file))
+                                if cyenv:
+                                    os.remove(word_json)
+                                    
+                                print("Muxxing with file:", unloc_sub)
+                                params = self.generate_params()
+                                r = self.merger.mux(f, unloc_sub, params)
+                                if r:
+                                    #Clean
+                                    self.clean_files(unloc_sub, f)
+                                else:
+                                    print("Failed to mux sub!")
+                                    self.ERRORS.append(str(self.file))
                         else:
                             print("Failed to modify subs!")
                             self.ERRORS.append(str(self.file))
