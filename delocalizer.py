@@ -3,15 +3,15 @@ import argparse
 import json
 import glob
 import os
-from utils import get_data
+from utils.lambda_fetch import get_data
 
 cyenv = os.getenv("CYENV", 'False').lower() in ('true', '1') #os.getenv('CYENV')
 
 if cyenv:
-    from cyfiles.modify_subs import modify_subs_py
+    from modify_subs import overwrite_subs as modify_subs_py
 else:
     from md_subs import modify_subs_py
-from merger import Merger
+from subdeloc_tools.modules.merger import Merger
 
 class Delocalizer:
 
@@ -26,9 +26,9 @@ class Delocalizer:
         self.subfile = None
         self.merger = Merger()
 
-    def modify_subs_alter(self, f):
+    def modify_subs(self, f):
         try:
-            name = modify_subs_py(f, self.wordsfile)
+            name = modify_subs_py(str(f), str(self.wordsfile))
             if name:
                 return name
             else:
@@ -37,7 +37,8 @@ class Delocalizer:
             print(e)
             return False
 
-    def modify_subs(self, jname):
+    # For use with non generative C modify subs *************
+    def replace_words(self, jname):
         try:
             f = open(jname, encoding="utf-8")
             new_lines = json.load(f)
@@ -53,7 +54,7 @@ class Delocalizer:
             print(e)
             return False
 
-    def replace_words(self, f):
+    def get_replace_file(self, f):
         try:
             name = modify_subs_py(str(f), str(self.wordsfile))
             if name != "":
@@ -63,6 +64,7 @@ class Delocalizer:
         except Exception as e:
             print(e)
             return False
+    # *******************************************************
 
     def shift_subs(self, delta):
         try:
@@ -181,14 +183,10 @@ class Delocalizer:
                     self.subfile = self.merger.demux(self.file, index, outputf)
                     if self.subfile:
                         print("Delocalizing...")
-                        # Delocalize file - Check if using Python or C
-                        if cyenv:
-                            print("Using C")
-                            word_json = self.replace_words(self.subfile)
-                            unloc_sub = self.modify_subs(word_json)
-                        else:
-                            print("Using Python")
-                            unloc_sub = self.modify_subs_alter(self.subfile)
+                        unloc_sub = self.modify_subs(self.subfile)
+                        # For reference
+                        # word_json = self.get_replace_file(self.subfile)
+                        # unloc_sub = self.replace_words(word_json)
 
                         if unloc_sub:
                             # Remove sub file and Mux unlocalized
@@ -196,11 +194,9 @@ class Delocalizer:
                             if self.nomux:
                                 self.clean_files(unloc_sub, f)
                             else:
-                                if cyenv:
-                                    os.remove(word_json)
-                                    
                                 print("Muxxing with file:", unloc_sub)
                                 params = self.generate_params()
+                                print("params", params)
                                 r = self.merger.mux(f, unloc_sub, params)
                                 if r:
                                     #Clean
