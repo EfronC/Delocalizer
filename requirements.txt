@@ -1,3 +1,9 @@
-Cython==0.29.35
+certifi==2024.2.2
+charset-normalizer==3.3.2
+idna==3.6
+modify-subs==0.3.0
 pysubs2==1.6.0
 python-dotenv==1.0.0
+requests==2.31.0
+subdeloc-tools==0.3.0
+urllib3==2.2.1

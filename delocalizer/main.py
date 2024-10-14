@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from delocalizer import Delocalizer
+from .delocalizer import Delocalizer
 
 parser = argparse.ArgumentParser(description='Modify a subtitle track to make a delocalized version from a JSON file.')
 parser.add_argument('--shift', dest='shift', type=float, action="store", default=0.0,
@@ -32,7 +32,7 @@ def main():
 	delocalizer = Delocalizer()
 	s = delocalizer.prepare_data(args)
 	if s:
-		delocalizer.delocalize()
+		delocalizer.delocalize_all()
 
 if __name__ == '__main__':
 	main()

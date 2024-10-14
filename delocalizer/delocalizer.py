@@ -3,15 +3,15 @@ import argparse
 import json
 import glob
 import os
-from utils import get_data
+from .utils.lambda_fetch import get_data
 
-cyenv = os.getenv("CYENV", 'False').lower() in ('true', '1') #os.getenv('CYENV')
+cyenv = os.getenv("CYENV", 'true').lower() in ('true', '1') #os.getenv('CYENV')
 
 if cyenv:
-    from cyfiles.modify_subs import modify_subs_py
+    from modify_subs import overwrite_subs as modify_subs_py
 else:
-    from md_subs import modify_subs_py
-from merger import Merger
+    from .md_subs import modify_subs_py
+from subdeloc_tools.modules.merger import Merger
 
 class Delocalizer:
 
@@ -26,9 +26,9 @@ class Delocalizer:
         self.subfile = None
         self.merger = Merger()
 
-    def modify_subs_alter(self, f):
+    def modify_subs(self, f):
         try:
-            name = modify_subs_py(f, self.wordsfile)
+            name = modify_subs_py(str(f), str(self.wordsfile))
             if name:
                 return name
             else:
@@ -37,7 +37,8 @@ class Delocalizer:
             print(e)
             return False
 
-    def modify_subs(self, jname):
+    # For use with non generative C modify subs *************
+    def replace_words(self, jname):
         try:
             f = open(jname, encoding="utf-8")
             new_lines = json.load(f)
@@ -53,7 +54,7 @@ class Delocalizer:
             print(e)
             return False
 
-    def replace_words(self, f):
+    def get_replace_file(self, f):
         try:
             name = modify_subs_py(str(f), str(self.wordsfile))
             if name != "":
@@ -63,6 +64,7 @@ class Delocalizer:
         except Exception as e:
             print(e)
             return False
+    # *******************************************************
 
     def shift_subs(self, delta):
         try:
@@ -112,7 +114,7 @@ class Delocalizer:
 
     def get_index(self):
         try:
-            streams = self.merger.get_streams(self.file)
+            streams = self.merger.get_streams()
             index = self.merger.get_language_index(self.language)
 
             return index
@@ -157,66 +159,68 @@ class Delocalizer:
             print(e)
             return False
 
-    def delocalize(self):
+    def delocalize(self, f):
         try:
-            files = glob.glob('*.mkv')
             index = -1
-            for f in files:
-                print("Extracting: ", f)
-                # Initial tasks
-                self.file = f
-                self.merger.set_file(f)
-                index = self.get_index()
+            print("Extracting: ", f)
+            # Initial tasks
+            self.file = f
+            self.merger.set_file(f)
+            index = self.get_index()
 
-                if index > -1:
-                    "Demux sub file"
-                    print("Subtitles found at", index)
-                    if self.merger.codec_name == "ass":
-                        outputf = "subfile.ass"
-                    elif self.merger.codec_name == "subrip":
-                        outputf = "subfile.srt"
-                    else:
-                        raise Exception("Subtitle codec not recognized")
-                        
-                    self.subfile = self.merger.demux(self.file, index, outputf)
-                    if self.subfile:
-                        print("Delocalizing...")
-                        # Delocalize file - Check if using Python or C
-                        if cyenv:
-                            print("Using C")
-                            word_json = self.replace_words(self.subfile)
-                            unloc_sub = self.modify_subs(word_json)
+            if index > -1:
+                "Demux sub file"
+                print("Subtitles found at", index)
+                if self.merger.codec_name == "ass":
+                    outputf = "subfile.ass"
+                elif self.merger.codec_name == "subrip":
+                    outputf = "subfile.srt"
+                else:
+                    raise Exception("Subtitle codec not recognized")
+                    
+                self.subfile = self.merger.demux(self.file, index, outputf)
+                if self.subfile:
+                    print("Delocalizing...")
+                    unloc_sub = self.modify_subs(self.subfile)
+                    # For reference
+                    # word_json = self.get_replace_file(self.subfile)
+                    # unloc_sub = self.replace_words(word_json)
+
+                    if unloc_sub:
+                        # Remove sub file and Mux unlocalized
+                        os.remove(self.subfile)
+                        if self.nomux:
+                            self.clean_files(unloc_sub, f)
                         else:
-                            print("Using Python")
-                            unloc_sub = self.modify_subs_alter(self.subfile)
-
-                        if unloc_sub:
-                            # Remove sub file and Mux unlocalized
-                            os.remove(self.subfile)
-                            if self.nomux:
+                            print("Muxxing with file:", unloc_sub)
+                            params = self.generate_params()
+                            print("params", params)
+                            r = self.merger.mux(f, unloc_sub, params)
+                            if r:
+                                #Clean
                                 self.clean_files(unloc_sub, f)
                             else:
-                                if cyenv:
-                                    os.remove(word_json)
-                                    
-                                print("Muxxing with file:", unloc_sub)
-                                params = self.generate_params()
-                                r = self.merger.mux(f, unloc_sub, params)
-                                if r:
-                                    #Clean
-                                    self.clean_files(unloc_sub, f)
-                                else:
-                                    print("Failed to mux sub!")
-                                    self.ERRORS.append(str(self.file))
-                        else:
-                            print("Failed to modify subs!")
-                            self.ERRORS.append(str(self.file))
+                                print("Failed to mux sub!")
+                                self.ERRORS.append(str(self.file))
                     else:
-                        print("Failed to extract Subtitle!")
+                        print("Failed to modify subs!")
                         self.ERRORS.append(str(self.file))
                 else:
-                    print("Subtitles not found!")
+                    print("Failed to extract Subtitle!")
                     self.ERRORS.append(str(self.file))
+            else:
+                print("Subtitles not found!")
+                self.ERRORS.append(str(self.file))
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def delocalize_all(self):
+        try:
+            files = glob.glob('*.mkv')
+            for f in files:
+                status = self.delocalize(f)
             return True
         except Exception as e:
             print(e)

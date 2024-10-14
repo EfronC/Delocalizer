@@ -6,16 +6,16 @@ Delocalizer script to replace a set of words in a subtitle track on an MKV file 
 ## Installation
 For Python:
 
+[Source]
 - Just create a Virtual Environment and run `pip install -r requirements`
 
-For C modules(Optional):
-
-- In progress...
+[PYPI]
+- `pip install delocalizer`
 
 ## Instructions
 
-- Make sure to create a .env file with the variable CYENV, which will tell the program if to use pure Python or Cython(If configured).
-- Set the files you want to delocalize in the root folder.
+- [Optional] Create a .env file with the variable CYENV, which will tell the program if to use pure Python or Cython, default if not defined is Cython.
+- Set the files you want to delocalize in the folder.
 - Create the JSON file, with this format
 ```
 {
@@ -25,5 +25,8 @@ For C modules(Optional):
 }
 ```
 
-Recommendation, if a word is contained in another("Hello" and "Hello World"), set the lengthier first.
-- Once you have created those files, just execute the program with `python main.py --j <name json file>.json`
+Recommendation: If a word is contained in another("Hello" and "Hello World"), set the lengthier first.
+- Once you have created those files, just execute the program with `delocalizer --j <name json file>.json`
+
+## Options
+
