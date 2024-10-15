@@ -18,6 +18,7 @@ class Delocalizer:
     def __init__(self):
         self.LANGUAGES = ["eng", "spa"]
         self.ERRORS = []
+        self.index = 0
         self.language = "eng"
         self.keep_subs = False
         self.nomux = False
@@ -36,35 +37,6 @@ class Delocalizer:
         except Exception as e:
             print(e)
             return False
-
-    # For use with non generative C modify subs *************
-    def replace_words(self, jname):
-        try:
-            f = open(jname, encoding="utf-8")
-            new_lines = json.load(f)
-            nfilename = "[Delocalized] "+self.subfile
-
-            subs = pysubs2.load(self.subfile, encoding="utf-8")
-            for nl, line in enumerate(subs):
-                if line.type == "Dialogue":
-                    line.text = new_lines[str(nl+1)]
-            subs.save(nfilename)
-            return nfilename
-        except Exception as e:
-            print(e)
-            return False
-
-    def get_replace_file(self, f):
-        try:
-            name = modify_subs_py(str(f), str(self.wordsfile))
-            if name != "":
-                return name
-            else:
-                return False
-        except Exception as e:
-            print(e)
-            return False
-    # *******************************************************
 
     def shift_subs(self, delta):
         try:
@@ -91,6 +63,8 @@ class Delocalizer:
             if args.language:
                 if args.language in LANGUAGES:
                     self.language = args.language
+            if args.index and args.index > 0:
+                self.index = args.index
             if args.keep_subs:
                 self.keep_subs = True
             if args.nomux:
@@ -115,7 +89,7 @@ class Delocalizer:
     def get_index(self):
         try:
             streams = self.merger.get_streams()
-            index = self.merger.get_language_index(self.language)
+            index = self.merger.get_language_index(self.language, selected_index=self.index)
 
             return index
         except Exception as e:
@@ -169,7 +143,6 @@ class Delocalizer:
             index = self.get_index()
 
             if index > -1:
-                "Demux sub file"
                 print("Subtitles found at", index)
                 if self.merger.codec_name == "ass":
                     outputf = "subfile.ass"
