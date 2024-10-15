@@ -29,4 +29,12 @@ Recommendation: If a word is contained in another("Hello" and "Hello World"), se
 - Once you have created those files, just execute the program with `delocalizer --j <name json file>.json`
 
 ## Options
-
+| Flag     | Description                                                                                             | Type   |
+|----------|---------------------------------------------------------------------------------------------------------|--------|
+| --shift  | Shift subtitles time for a desired amount of seconds.                                                   | float  |
+| --j      | JSON file with the words to replace. REQUIRED.                                                          | string |
+| --l      | Set which language to search for the subtitle track. ex: 'en'.                                          | string |
+| --w      | Flag used to mark that a custom lambda can be used. Requires to have added the JSONLAMBDA in the .env . | string |
+| --f      | Folder to output the generated MKVs. Subtitle files are kept in current folder if marked not to delete. | string |
+| --k      | Flag used to keep the unlocalized subtitle file.                                                        | bool   |
+| --no-mux | Flag used to skip the step to mux the subtitle file to the MKV.                                         | bool   |
