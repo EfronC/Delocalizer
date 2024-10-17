@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Mux or Demux MKV files')
 parser.add_argument('--p', dest='print', action=argparse.BooleanOptionalAction,
 				   help='Print language indexes')
 parser.add_argument('--mux', dest='mux', action=argparse.BooleanOptionalAction, required=not '--p' in sys.argv,
-				   help='Shift time')
+				   help='Mux or demux operation')
 parser.add_argument('--m', dest='multi', action=argparse.BooleanOptionalAction, default=False,
 				   help='If multiple files will be affected')
 parser.add_argument('--f', dest='folder', type=str, action="store", default=False,

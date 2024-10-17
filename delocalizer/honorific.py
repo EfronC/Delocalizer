@@ -17,23 +17,28 @@ parser.add_argument('--n', dest='names', type=str, action="store", default=False
 				   help='Names file')
 parser.add_argument('--honor', dest='honorifics', type=str, action="store", default=False,
 				   help='Honorifics file')
+parser.add_argument('--o', dest='output', type=str, action="store", default=False,
+				   help='Output name')
 
 path = './Honorifics'
+output_name = False
 
-def fix_honorifics(sub, ref, names, honorifics=""):
+def fix_honorifics(sub, ref, names, honorifics="./honorifics.json"):
 	fname = sub.split(".")[0]
-	st = SubTools(sub, ref, names, "./honorifics.json", "[Fixed]"+fname+".ass")
+	on = output_name if output_name else "[Fixed]"+fname+".ass"
+	st = SubTools(sub, ref, names, honorifics, on)
 	return st.main()
-	# res = pairsubs.pair_files(sub, ref)
-	# s = st.search_honorifics(res)
-	# return honorific_fixer.fix_original(sub, s, "[Fixed]"+fname+".ass")
 
 def main():
 	global path
+	global output_name
 	args = parser.parse_args()
 
 	if args.folder:
 		path = args.folder
+
+	if args.output:
+		output_name = args.output
 
 	if not path.startswith("./"):
 		path = "./"+path

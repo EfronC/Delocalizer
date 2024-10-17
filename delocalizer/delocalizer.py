@@ -53,8 +53,12 @@ class Delocalizer:
     def prepare_data(self, args):
         try:
             if args.words:
-                words = get_data(args.words)
-                self.wordsfile = words
+                lambda_url = os.getenv("JSONLAMBDA", False)
+                if lambda_url:
+                    words = get_data(args.words)
+                    self.wordsfile = words
+                else:
+                    raise Exception("No Lambda url in environment")
             else:
                 if args.jfile:
                     self.wordsfile = args.jfile

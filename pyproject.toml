@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delocalizer"
-version = "0.2.0"
+version = "0.3.0"
 description = ""
 authors = ["Efrain <efrondx@gmail.com>"]
 readme = "README.md"
@@ -10,7 +10,7 @@ python = "^3.8"
 requests = "^2.32.3"
 pysubs2 = "^1.7.3"
 python-dotenv = "^1.0.1"
-subdeloc-tools = "^0.8.0"
+subdeloc-tools = "^0.8.1"
 
 [tool.poetry.scripts]
 delocalizer = "delocalizer.main:main"

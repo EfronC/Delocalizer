@@ -7,7 +7,14 @@ Delocalizer script to replace a set of words in a subtitle track on an MKV file 
 For Python:
 
 [Source]
-- Just create a Virtual Environment and run `pip install -r requirements`
+- Install Poetry
+- Run `poetry install`
+- Execute the commands through `poetry run <command> <args>`
+
+or
+
+- Create a Virtual Environment and run `pip install -r requirements`
+- Execute the files directly, example `python delocalizer/main.py <args>`
 
 [PYPI]
 - `pip install delocalizer`
@@ -33,17 +40,23 @@ Recommendation: If a word is contained in another("Hello" and "Hello World"), se
 - Once you have created those files, just execute the program with `delocalizer --j <name json file>.json`
 
 ### Options
-| Flag     | Description                                                                                             | Type   |
-|----------|---------------------------------------------------------------------------------------------------------|--------|
-| --shift  | Shift subtitles time for a desired amount of seconds.                                                   | float  |
-| --j      | JSON file with the words to replace. REQUIRED.                                                          | string |
-| --l      | Set which language to search for the subtitle track. ex: 'en'.                                          | string |
-| --w      | Flag used to mark that a custom lambda can be used. Requires to have added the JSONLAMBDA in the .env . | string |
-| --f      | Folder to output the generated MKVs. Subtitle files are kept in current folder if marked not to delete. | string |
-| --k      | Flag used to keep the unlocalized subtitle file.                                                        | bool   |
-| --no-mux | Flag used to skip the step to mux the subtitle file to the MKV.                                         | bool   |
+| Flag     | Description                                                                                             | Type   | Required |
+|----------|---------------------------------------------------------------------------------------------------------|--------|----------|
+| --j      | JSON file with the words to replace. REQUIRED.                                                          | string |     ✓    |
+| --l      | Set which language to search for the subtitle track. ex: 'eng'.                                         | string |     ✗    |
+| --i      | Index of the subtitle track.                                                                            | int    |     ✗    |
+| --shift  | Shift subtitles time for a desired amount of seconds.                                                   | float  |     ✗    |
+| --w      | Flag used to mark that a custom lambda can be used. Requires to have added the JSONLAMBDA in the .env . | bool   |     ✗    |
+| --f      | Folder to output the generated MKVs. Subtitle files are kept in current folder if marked not to delete. | string |     ✗    |
+| --k      | Flag used to keep the unlocalized subtitle file.                                                        | bool   |     ✗    |
+| --no-mux | Flag used to skip the step to mux the subtitle file to the MKV.                                         | bool   |     ✗    |
 
 ## Examples
+
+- Delocalize all files on current folder.
+```
+delocalizer --j sample.json
+```
 
 
 ## Extractor
@@ -56,6 +69,15 @@ Allows to extract one or all subtitle tracks, and also to append new tracks to a
 - Execute the command
 
 ### Options
+| Flag  | Description                        | Type   | Required |
+|-------|------------------------------------|--------|----------|
+| --mux | Whether mux or demux               | bool   | ✓        |
+| --m   | If multiple files will be affected | bool   | ✗        |
+| --f   | Folder to save                     | string | ✗        |
+| --s   | Subtitle file to append            | string | if mux   |
+| --i   | Input MKV filename                 | string | if mux   |
+| --idx | Index of the subtitle to extract   | int    | ✗        |
+| --p   | Print language indexes             | bool   | ✗        |
 
 ### Examples
 
@@ -81,8 +103,41 @@ extractor --mux --i 'file.mkv' --s 'file.ass'
 
 - Print subtitle tracks
 ```
-extractor --p --m
+extractor --p
 ```
+
+
+## Honorifics
+
+Allows to use a reference subtitle file to add honorifics to an english subtitle file. Only Japanese-English is supported at the moment.
+
+### Instructions
+
+- Add the english and japanese subtitle files in your current folder.
+- Add a names JSON file with the next format. Make sure that for the JP name it uses either japanese or roman characters, depending on how it is in the reference file.
+```
+{
+    "<english name>": "<japanese name>"
+}
+```
+- Add an honorifics.json file to your current folder. A sample of this file can be fetched with
+```
+from subdeloc_tools.subtools import SubTools
+import json
+
+json.dumps(SubTools.get_default_honorifics_file())
+```
+- Call the command to generate the new subtitle file
+
+### Options
+| Flag  | Description                     | Type   | Required |
+|-------|---------------------------------|--------|----------|
+| --f   | Folder to save                  | string | ✗        |
+| --ref | Reference subtitle in Japanese  | string | ✓        |
+| --i   | Original subtitle               | string | ✓        |
+| --n   | Names file                      | string | ✓        |
+| --h   | Custom path for honorifics file | string | ✗        |
+| --o   | Custom output name for result   | string | ✗        |
 
 ### Examples
 
