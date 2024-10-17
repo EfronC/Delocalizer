@@ -55,7 +55,7 @@ class Delocalizer:
             if args.words:
                 lambda_url = os.getenv("JSONLAMBDA", False)
                 if lambda_url:
-                    words = get_data(args.words)
+                    words = get_data(lambda_url)
                     self.wordsfile = words
                 else:
                     raise Exception("No Lambda url in environment")
