@@ -211,12 +211,12 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "subdeloc-tools"
-version = "0.8.0"
+version = "0.8.1"
 description = "Subtitles delocalizer tools."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "subdeloc_tools-0.8.0-py3-none-any.whl", hash = "sha256:6b03d5f1c18ac7817cc7eed99a12103b0acc0e8626d8b2fb7f69ea1aae71a0f1"},
+    {file = "subdeloc_tools-0.8.1-py3-none-any.whl", hash = "sha256:8f5d78d1fada84bff18d71016cb7ea7a73ea67452edee7841db0c9d30269fe01"},
 ]
 
 [package.dependencies]
@@ -243,4 +243,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "e39cd5e631b490d84aa039a44862cf2a14cac62ed2e9c7d10625a74f0d19962a"
+content-hash = "10cfda57e9c124bac000adbf3acf42831b31e06bf0ab717469544d80271283aa"

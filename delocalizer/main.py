@@ -15,7 +15,7 @@ parser.add_argument('--l', dest='language', type=str, action="store", default=Fa
                    help='Language to search')
 parser.add_argument('--i', dest='index', type=int, action="store", default=False,
                    help='Index of the subtitle track')
-parser.add_argument('--w', dest='words', type=str, action="store", default=False,
+parser.add_argument('--w', dest='words', action=argparse.BooleanOptionalAction,
                    help='Use an external lambda to get the keywords JSON')
 parser.add_argument('--f', dest='folder', type=str, action="store", default=False,
                    help='Folder to save')
