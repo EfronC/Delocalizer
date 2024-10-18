@@ -18,34 +18,34 @@ parser.add_argument('--s', dest='subtitle', type=str, action="store", default=Fa
 				   help='Subtitle file to append')
 parser.add_argument('--i', dest='input', type=str, action="store", default=False, required='--mux' in sys.argv,
 				   help='Input MKV filename')
-parser.add_argument('--idx', dest='index', type=int, action="store", default=False,
+parser.add_argument('--idx', dest='index', type=int, action="store", default=-1,
 				   help='Index of the subtitle to extract')
 
 path = './Extracted'
 merger = Merger()
 
 def generate_subs_params(sfiles):
-    try:
-        params = []
-        for i in sfiles:
-            params = params + ["-map", "0:s:"+str(i)]
-        return params
-    except Exception as e:
-        print(e)
-        return False
+	try:
+		params = []
+		for i in sfiles:
+			params = params + ["-map", "0:s:"+str(i)]
+		return params
+	except Exception as e:
+		print(e)
+		return False
 
 def generate_params(filename):
-    try:
-        sfiles = merger.get_kept_subs()
-        newfilename = path+os.sep+filename + '.mkv'
+	try:
+		sfiles = merger.get_kept_subs()
+		newfilename = path+os.sep+filename + '.mkv'
 
-        subparams = generate_subs_params(sfiles)
+		subparams = generate_subs_params(sfiles)
 
-        ads = ["-metadata:s:s:{}".format(len(sfiles)), "language=eng", "-metadata:s:s:{}".format(len(sfiles)), "handler_name=English", "-metadata:s:s:{}".format(len(sfiles)), "title=Appended", "-max_interleave_delta", "0", "-disposition:s:0", "0", "-disposition:s:{}".format(len(sfiles)), "default", newfilename]
-        return (subparams, ads)
-    except Exception as e:
-        print(e)
-        return []
+		ads = ["-metadata:s:s:{}".format(len(sfiles)), "language=eng", "-metadata:s:s:{}".format(len(sfiles)), "handler_name=English", "-metadata:s:s:{}".format(len(sfiles)), "title=Appended", "-max_interleave_delta", "0", "-disposition:s:0", "0", "-disposition:s:{}".format(len(sfiles)), "default", newfilename]
+		return (subparams, ads)
+	except Exception as e:
+		print(e)
+		return []
 
 def print_indexes(multi, file:str=""):
 	if multi:
@@ -66,14 +66,29 @@ def print_indexes(multi, file:str=""):
 def extract(file:str, path:str, index:int=-1):
 	merger.set_file(file)
 	fname = file.split(".")[0]
+	ext = ".txt"
 
 	if index>-1:
-		merger.demux(file, index, path+os.sep+fname+".ass")
+		streams = merger.get_streams()
+		codec_name = streams["streams"][index]['codec_name']
+		if codec_name == "ass":
+			ext = ".ass"
+		elif codec_name == "subrip":
+			ext = ".srt"
+		else:
+			ext = ".txt"
+		merger.demux(file, index, path+os.sep+fname+ext)
 	else:
 		streams = merger.get_streams()
 		for i in streams["streams"]:
 			if i["codec_type"] == "subtitle":
-				merger.demux(file, i["index"], path+os.sep+fname+"_"+str(i["index"])+".ass")
+				if i["codec_name"] == "ass":
+					ext = ".ass"
+				elif i["codec_name"] == "subrip":
+					ext = ".srt"
+				else:
+					ext = ".txt"
+				merger.demux(file, i["index"], path+os.sep+fname+"_"+str(i["index"])+ext)
 
 	return
 
