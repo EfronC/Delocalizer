@@ -103,13 +103,13 @@ extractor --mux --i 'file.mkv' --s 'file.ass'
 
 - Print subtitle tracks
 ```
-extractor --p
+extractor --p --m
 ```
 
 
 ## Honorifics
 
-Allows to use a reference subtitle file to add honorifics to an english subtitle file. Only Japanese-English is supported at the moment.
+Allows to use a reference subtitle file to add honorifics to an english subtitle file. It also allows to pass another file with a translation using honorifics on a non-japanese language, so it will add the honorifics, if possible, to the english one, currently only tested on Esp-Eng.
 
 ### Instructions
 
@@ -130,18 +130,24 @@ json.dumps(SubTools.get_default_honorifics_file())
 - Call the command to generate the new subtitle file
 
 ### Options
-| Flag  | Description                     | Type   | Required |
-|-------|---------------------------------|--------|----------|
-| --f   | Folder to save                  | string | ✗        |
-| --ref | Reference subtitle in Japanese  | string | ✓        |
-| --i   | Original subtitle               | string | ✓        |
-| --n   | Names file                      | string | ✓        |
-| --h   | Custom path for honorifics file | string | ✗        |
-| --o   | Custom output name for result   | string | ✗        |
+| Flag     | Description                     | Type   | Required |
+|----------|---------------------------------|--------|----------|
+| --f      | Folder to save                  | string | ✗        |
+| --ref    | Reference subtitle              | string | ✓        |
+| --i      | Original subtitle               | string | ✓        |
+| --n      | Names file                      | string | ✓        |
+| --tokens | If not using japanese reference | bool   | ✗        |
+| --honor  | Custom path for honorifics file | string | ✗        |
+| --o      | Custom output name for result   | string | ✗        |
 
 ### Examples
 
 - Fix honorifics
 ```
-honorifics --ref 'jap.ass' --i 'eng.ass' --n 'names.json'
+honorifics --ref 'jap.ass' --i 'eng.ass' --n 'names.json' --honor './honorifics.json'
+```
+
+- Fix from tokens
+```
+honorifics --ref 'ref.ass' --i 'orig.ass' --n 'names.json' --honor './honorifics.json' --tokens
 ```
