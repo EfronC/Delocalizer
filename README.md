@@ -151,3 +151,7 @@ honorifics --ref 'jap.ass' --i 'eng.ass' --n 'names.json' --honor './honorifics.
 ```
 honorifics --ref 'ref.ass' --i 'orig.ass' --n 'names.json' --honor './honorifics.json' --tokens
 ```
+
+Sister projects:
+- [SubDelocalizer Tools](https://github.com/EfronC/subdeloc_tools)
+- [C Helpers](https://github.com/EfronC/subdeloc_helper)
