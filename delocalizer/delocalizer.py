@@ -14,7 +14,9 @@ else:
 from subdeloc_tools.modules.merger import Merger
 
 class Delocalizer:
-
+    """
+    Main delocalizer class
+    """
     def __init__(self):
         self.LANGUAGES = ["eng", "spa"]
         self.ERRORS = []
@@ -28,6 +30,9 @@ class Delocalizer:
         self.merger = Merger()
 
     def modify_subs(self, f):
+        """
+        Modify the file by changing the words specified in the Words file.
+        """
         try:
             name = modify_subs_py(str(f), str(self.wordsfile))
             if name:
@@ -39,6 +44,9 @@ class Delocalizer:
             return False
 
     def shift_subs(self, delta):
+        """
+        Shift all subs a determined amount of time. To be depredecated.
+        """
         try:
             subs1 = pysubs2.load(self.file, encoding="utf-8")
             subs1.shift(s=delta)
@@ -51,6 +59,9 @@ class Delocalizer:
             return False
 
     def prepare_data(self, args):
+        """
+        Initialize data from the args.
+        """
         try:
             if args.words:
                 lambda_url = os.getenv("JSONLAMBDA", False)
@@ -80,6 +91,9 @@ class Delocalizer:
             return False
 
     def print_errors(self):
+        """
+        Print error array.
+        """
         try:
             if len(ERRORS) > 0:
                 print("There were errors:")
@@ -91,6 +105,10 @@ class Delocalizer:
             print(e)
 
     def get_index(self):
+        """
+        Get index of the subtitle track for the requested language. 
+        Default: eng.
+        """
         try:
             streams = self.merger.get_streams()
             index = self.merger.get_language_index(self.language, selected_index=self.index)
@@ -101,6 +119,9 @@ class Delocalizer:
             return -1
 
     def generate_subs_params(self, sfiles):
+        """
+        Generate arguments to insert subtitle at last position for the FFMPEG command.
+        """
         try:
             params = []
             for i in sfiles:
@@ -111,6 +132,9 @@ class Delocalizer:
             return False
 
     def generate_params(self):
+        """
+        Generate whole arguments for the FFMPEG command.
+        """
         try:
             sfiles = self.merger.get_kept_subs()
             filename = os.path.splitext(self.file)[0]
@@ -125,6 +149,9 @@ class Delocalizer:
             return []
 
     def clean_files(self, file, f):
+        """
+        Remove intermediate delocalized subtitle file.
+        """
         try:
             if not self.keep_subs:
                 os.remove(file)
@@ -138,6 +165,9 @@ class Delocalizer:
             return False
 
     def delocalize(self, f):
+        """
+        Delocalize a single file.
+        """
         try:
             index = -1
             print("Extracting: ", f)
@@ -194,6 +224,9 @@ class Delocalizer:
             return False
 
     def delocalize_all(self):
+        """
+        Delocalize all MKV files in current folder.
+        """
         try:
             files = glob.glob('*.mkv')
             for f in files:
