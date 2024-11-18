@@ -8,7 +8,7 @@ from .utils.lambda_fetch import get_data
 cyenv = os.getenv("CYENV", 'true').lower() in ('true', '1') #os.getenv('CYENV')
 
 if cyenv:
-    from modify_subs import overwrite_subs as modify_subs_py
+    from c_delocalizer.modify_subs import overwrite_subs as modify_subs_py
 else:
     from .md_subs import modify_subs_py
 from subdeloc_tools.modules.merger import Merger
