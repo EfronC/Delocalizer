@@ -10,7 +10,8 @@ python = "^3.8"
 requests = "^2.32.3"
 pysubs2 = "^1.7.3"
 python-dotenv = "^1.0.1"
-subdeloc-tools = "^0.9.2"
+subdeloc-tools = "^0.9.8"
+modify-subs = "^0.5.0"
 
 [tool.poetry.scripts]
 delocalizer = "delocalizer.main:main"
