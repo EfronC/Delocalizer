@@ -118,36 +118,6 @@ class Delocalizer:
             print(e)
             return -1
 
-    def generate_subs_params(self, sfiles):
-        """
-        Generate arguments to insert subtitle at last position for the FFMPEG command.
-        """
-        try:
-            params = []
-            for i in sfiles:
-                params = params + ["-map", "0:s:"+str(i)]
-            return params
-        except Exception as e:
-            print(e)
-            return False
-
-    def generate_params(self):
-        """
-        Generate whole arguments for the FFMPEG command.
-        """
-        try:
-            sfiles = self.merger.get_kept_subs()
-            filename = os.path.splitext(self.file)[0]
-            newfilename = "."+os.sep+"Finished"+os.sep+filename + '.mkv'
-
-            subparams = self.generate_subs_params(sfiles)
-
-            ads = ["-metadata:s:s:{}".format(len(sfiles)), "language=eng", "-metadata:s:s:{}".format(len(sfiles)), "handler_name=English", "-metadata:s:s:{}".format(len(sfiles)), "title=Unlocalized", "-max_interleave_delta", "0", "-disposition:s:0", "0", "-disposition:s:{}".format(len(sfiles)), "default", newfilename]
-            return (subparams, ads)
-        except Exception as e:
-            print(e)
-            return []
-
     def clean_files(self, file, f):
         """
         Remove intermediate delocalized subtitle file.
@@ -200,9 +170,7 @@ class Delocalizer:
                             self.clean_files(unloc_sub, f)
                         else:
                             print("Muxxing with file:", unloc_sub)
-                            params = self.generate_params()
-                            print("params", params)
-                            r = self.merger.mux(f, unloc_sub, params)
+                            r = self.merger.mux(f, unloc_sub, "./Finished")
                             if r:
                                 #Clean
                                 self.clean_files(unloc_sub, f)

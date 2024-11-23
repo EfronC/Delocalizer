@@ -152,29 +152,29 @@ all = ["flake8 (>=7.1.1)", "mypy (>=1.11.2)", "pytest (>=8.3.2)", "ruff (>=0.6.2
 
 [[package]]
 name = "modify-subs"
-version = "0.5.0"
+version = "0.5.1"
 description = "Subtitles delocalizer helper."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "modify_subs-0.5.0-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:3df810bece4582be20ea6f8ab0ce7daaf203bac9b05f0e56f315f0e6fab6b5fa"},
-    {file = "modify_subs-0.5.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d90e96b6f39b497aa7572af47146acebad3880a2e35ed68918af3e6f02009375"},
-    {file = "modify_subs-0.5.0-cp310-cp310-win_amd64.whl", hash = "sha256:9da4e200f5dcc3cb1a40981370a6e42f11160272db217839393a634c02b1f60b"},
-    {file = "modify_subs-0.5.0-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:9021f3eaf80230dc9250cc1438ed4d763f8d5574dcb517e79c91d65b919cc565"},
-    {file = "modify_subs-0.5.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:06a386ffc357a6fdba2d889d8aef820ef1370385db640cad5015de2023147a17"},
-    {file = "modify_subs-0.5.0-cp311-cp311-win_amd64.whl", hash = "sha256:60a7895840a7c6a7c520b8fa742b28ca49553ef7e6179900404394d054d0c6de"},
-    {file = "modify_subs-0.5.0-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:88a0b7a240e7ad5bda145dbdfe059d1eae72326f1b8245426bcf62941b82dd2f"},
-    {file = "modify_subs-0.5.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7463f85a125e6f3e79ffae8ba21cab21c290aa608483dfbfd4e0850d7734a7b2"},
-    {file = "modify_subs-0.5.0-cp312-cp312-win_amd64.whl", hash = "sha256:43ff0a82cf22c783bf7fd50ad4034bddb8605fe3b2aea30e9ecf9f0058ec148f"},
-    {file = "modify_subs-0.5.0-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:564e27cdd2f7e886e1004c8532280e925a046dbb36d806046623b5946cbab5c8"},
-    {file = "modify_subs-0.5.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1f1e6810e5b7c4cdaa6c7b2f153661eb3b1ef3e7b203ef8cec7ea12933fb27bd"},
-    {file = "modify_subs-0.5.0-cp313-cp313-win_amd64.whl", hash = "sha256:c7f657e52d45f32f45f42674a549ce884c188cfea94dad07c669bf789bc9846d"},
-    {file = "modify_subs-0.5.0-cp38-cp38-macosx_14_0_arm64.whl", hash = "sha256:5ca10d7f6f451c5efb8cfa7b061d5d94aba9fe7cf2d97ec35e5b6a124aaf8c5d"},
-    {file = "modify_subs-0.5.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d0bd76f13493760fe489d73097a015e4535ff1eb5c77086d428d7baa43cef833"},
-    {file = "modify_subs-0.5.0-cp38-cp38-win_amd64.whl", hash = "sha256:13d74033b8942a2a9dc5e0e5e4d52eba7a5c6c9b235932c2522ed69e49b80f7e"},
-    {file = "modify_subs-0.5.0-cp39-cp39-macosx_14_0_arm64.whl", hash = "sha256:2a01640363097bf25aa5efb100a98ad9c6d048361f9e79bb897e837475a6b0fd"},
-    {file = "modify_subs-0.5.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1aeea1d8ed3a4b27b940a441f3621abdb17f7c347633e60a5bd106d5b9a4abfc"},
-    {file = "modify_subs-0.5.0-cp39-cp39-win_amd64.whl", hash = "sha256:993ccf9058ae729c98f10998931c1928847a02bcdfb8071fecf33f243b83549c"},
+    {file = "modify_subs-0.5.1-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:1493103b834cb001b357ffd21f4440de9498290e8a988e43b619556140bd7eee"},
+    {file = "modify_subs-0.5.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:568c6b10b5dee76260664c63bcadc80967a63bd64e5ef1bd314d862b52e2a28e"},
+    {file = "modify_subs-0.5.1-cp310-cp310-win_amd64.whl", hash = "sha256:80a4d9ac96cb72d77c08b3e9575e60496ceb5a619ae81290b6c8417bda841ba4"},
+    {file = "modify_subs-0.5.1-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:78f5ce578bca494d868ff4e238cec5c534172ef9d991c4807676fb3253d57769"},
+    {file = "modify_subs-0.5.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a3f71f85dd276f234b59accaf772350395dc3957e08b5c2679876ede82e9dc48"},
+    {file = "modify_subs-0.5.1-cp311-cp311-win_amd64.whl", hash = "sha256:0132d5883a494f5132f60e6886e48b31ebb54744b4d9939be0ac74abc89201de"},
+    {file = "modify_subs-0.5.1-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:26f7554a8fb2cc37c68fc5392ec4cb999c8c55162ea914990a74bc9b6a70ff04"},
+    {file = "modify_subs-0.5.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:642497a941b69781e922009fde006a299728b21f4b3beb68237be3d9f8a7bb91"},
+    {file = "modify_subs-0.5.1-cp312-cp312-win_amd64.whl", hash = "sha256:295f7629f5bf4d46889a61f78152de8fb902fefaae57e5593364dce45a3099de"},
+    {file = "modify_subs-0.5.1-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:4f45169cbfa52f9c68cfc0faefc955fe503051b13fe6a3b9e9eafa38225c30db"},
+    {file = "modify_subs-0.5.1-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5f7da727a65e3c7446a4dec9ce295922c4d3d1aab7b332af2291d5164a16c1cc"},
+    {file = "modify_subs-0.5.1-cp313-cp313-win_amd64.whl", hash = "sha256:eac029998b6eff3982c653b10a18225a8e5a7e0046805e3ac30d4bdfef6b7423"},
+    {file = "modify_subs-0.5.1-cp38-cp38-macosx_14_0_arm64.whl", hash = "sha256:2d57d24855ade1703e85acb87c24b92642d0906457685250c8a34885881886b1"},
+    {file = "modify_subs-0.5.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:96d923c7189af2149e068839baa862045ed9d2bf1d0ad5c40f115a1a95497ca5"},
+    {file = "modify_subs-0.5.1-cp38-cp38-win_amd64.whl", hash = "sha256:2d6ce815d41352931486e879cf1491d8bb965d6caf89c11dcdb5cb1d6d1d6b3a"},
+    {file = "modify_subs-0.5.1-cp39-cp39-macosx_14_0_arm64.whl", hash = "sha256:64b54289f1ad4c04d43fcd6c6ef360c69dbe88b4307dc3f18f43e45251027902"},
+    {file = "modify_subs-0.5.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a2689931e262e564b0b6c56d9954080dffe44364fc13f8ea2d1d2566095aa252"},
+    {file = "modify_subs-0.5.1-cp39-cp39-win_amd64.whl", hash = "sha256:c8414facd1fe6a2d3c25f7e53531d46eba6f0e42cfec377040c6ddb69c33fdc6"},
 ]
 
 [[package]]
@@ -225,12 +225,12 @@ use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "subdeloc-tools"
-version = "0.9.8"
+version = "0.9.11"
 description = "Subtitles delocalizer tools."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "subdeloc_tools-0.9.8-py3-none-any.whl", hash = "sha256:5d7ba3efdf2e3077fc52ea244ebf4f7c36dafb4c711b5a1283c5e07edd6706a9"},
+    {file = "subdeloc_tools-0.9.11-py3-none-any.whl", hash = "sha256:64e9e5164c31d8786ed32ab0edf80e3822a9444d43f00b55f505f79a7f173a9b"},
 ]
 
 [package.dependencies]
@@ -258,4 +258,4 @@ zstd = ["zstandard (>=0.18.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "bb00188f4ba8a0ebbe2205e93d3a7987c79f86cb04b0dc6ca8610eedeedf933c"
+content-hash = "1df54d149ae43f98a5be9cfba6179e8de1af6a782323c7d4579a20a5d0729c41"
