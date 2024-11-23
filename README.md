@@ -1,7 +1,7 @@
 Delocalizer
 ===========
 
-Delocalizer script to replace a set of words in a subtitle track on an MKV file for one specified on a JSON file.
+Delocalizer script to replace a set of words in a subtitle track on an MKV file for one specified on a JSON file. You can find example resources [here](https://efronc.github.io/delocalizer-files).
 
 ## Installation
 For Python:

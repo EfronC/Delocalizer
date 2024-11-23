@@ -24,29 +24,6 @@ parser.add_argument('--idx', dest='index', type=int, action="store", default=-1,
 path = './Extracted'
 merger = Merger()
 
-def generate_subs_params(sfiles):
-	try:
-		params = []
-		for i in sfiles:
-			params = params + ["-map", "0:s:"+str(i)]
-		return params
-	except Exception as e:
-		print(e)
-		return False
-
-def generate_params(filename):
-	try:
-		sfiles = merger.get_kept_subs()
-		newfilename = path+os.sep+filename + '.mkv'
-
-		subparams = generate_subs_params(sfiles)
-
-		ads = ["-metadata:s:s:{}".format(len(sfiles)), "language=eng", "-metadata:s:s:{}".format(len(sfiles)), "handler_name=English", "-metadata:s:s:{}".format(len(sfiles)), "title=Appended", "-max_interleave_delta", "0", "-disposition:s:0", "0", "-disposition:s:{}".format(len(sfiles)), "default", newfilename]
-		return (subparams, ads)
-	except Exception as e:
-		print(e)
-		return []
-
 def print_indexes(multi, file:str=""):
 	if multi:
 		files = glob.glob('*.mkv')
@@ -92,12 +69,11 @@ def extract(file:str, path:str, index:int=-1):
 
 	return
 
-def append(file:str, subtitle:str, path:str):
+def append(file:str, subtitle:str, custom_path:str=path):
 	merger.set_file(file)
 	fname = file.split(".")[0]
 
-	params = generate_params(fname)
-	r = merger.mux(file, subtitle, params)
+	r = merger.mux(file, subtitle, custom_path)
 	return r
 
 def main():
