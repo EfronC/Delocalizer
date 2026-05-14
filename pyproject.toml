@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "delocalizer"
-version = "0.5"
+version = "0.5.1"
 description = ""
 authors = ["Efrain <efrondx@gmail.com>"]
 readme = "README.md"
